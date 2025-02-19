@@ -57,9 +57,8 @@ def load_data(data_path="data/"):
     return drivers, maneuver_names, dfs_copy
 
 def get_loaders(
-    test_driver_ind, maneuver_ind, window_size, window_step=None, data_path="data/", verbose=False
+    test_driver_ind, maneuver_ind, window_size, drivers, maneuver_names, dfs ,  window_step=None, verbose=False
 ):
-    drivers, maneuver_names, dfs = load_data(data_path)
     if verbose:
         print("INFO: parsing driving dataset")
         print(f"INFO: drivers found {drivers}")
