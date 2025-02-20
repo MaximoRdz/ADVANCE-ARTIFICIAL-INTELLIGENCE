@@ -70,7 +70,7 @@ def load_data(data_path="data/"):
     return drivers, maneuver_names, dfs_copy
 
 def get_loaders(
-    test_driver_ind, maneuver_ind, window_size, drivers, maneuver_names, dfs ,  window_step=None, verbose=False
+    test_driver_ind, maneuver_ind, window_size, drivers, maneuver_names, dfs, window_step=None, verbose=False
 ):
     if verbose:
         print("INFO: parsing driving dataset")
