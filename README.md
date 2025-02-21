@@ -12,5 +12,7 @@ pip install -r requirements.txt
 - Move DriverX folders to data folder
 
 
-## Bibliography
-- [github LSTM](https://github.com/Schuster-j/maneuverRecognition)
+## Content
+- preprocessing.ipynb: notebook with the preprocessing of the data.
+- experimentation.ipynb: notebook with the experimentation and comparison of the models.
+- maneuvers.ipynb: notebook with the results and analysis of each maneuver.
