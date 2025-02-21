@@ -10,6 +10,7 @@ pip install -r requirements.txt
 - Unzip ManiobrasSimulador.zip
 - Create a folder named 'data'
 - Move DriverX folders to data folder
+- **Error**: Typo in filename `Driver5/STISIMData_3step-Turning` should be `Driver5/STISIMData_3step-Turnings`
 
 
 ## Content

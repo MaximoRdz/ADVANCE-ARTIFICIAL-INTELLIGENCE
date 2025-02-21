@@ -1,5 +1,3 @@
-"""TODO."""
-
 import copy
 import os
 
@@ -127,108 +125,6 @@ def get_loaders(
     return X_train, X_test, y_train, y_test
 
 
-def evaluate_drivers(drivers, maneuver_id, maneuver_names, dfs, window_size, window_step, model_type="logreg", verbose=True):
-    cross_val_accs = []
-    test_accs = []
-    test_f1_scores = []
-
-    for i, driver in enumerate(drivers):
-        if verbose:
-            print(f"\nDriver: {driver}\n")
-        
-        X_train_driver_fold, X_test_driver_fold, y_train_driver_fold, y_test_driver_fold = get_loaders(
-            test_driver_ind=i,
-            maneuver_ind=maneuver_id,
-            drivers=drivers,
-            maneuver_names=maneuver_names,
-            dfs=dfs,
-            window_size=window_size,
-            window_step=window_step,
-        )
-        scaler = StandardScaler()
-        X_train = scaler.fit_transform(X_train_driver_fold)
-        X_test = scaler.transform(X_test_driver_fold)
-
-        # TimeSeriesSplit with 5 splits
-        tscv = TimeSeriesSplit(n_splits=5)
-        model_scores = []
-
-        # Cross-validation
-        for train_index, test_index in tscv.split(X_train):  
-            X_train_fold, X_val_fold = X_train[train_index], X_train[test_index]
-            y_train_fold, y_val_fold = y_train_driver_fold.iloc[train_index], y_train_driver_fold.iloc[test_index]
-
-            if model_type == "logreg":
-                # Logistic Regression model
-                logreg_model = LogisticRegression(penalty='l1', solver='liblinear')
-                logreg_model.fit(X_train_fold, y_train_fold)
-                
-                logreg_y_pred = logreg_model.predict(X_val_fold)
-                model_scores.append(accuracy_score(y_val_fold, logreg_y_pred))
-            
-            elif model_type == "lstm":
-                # LSTM/GRU model
-                X_train_fold = X_train_fold.reshape((X_train_fold.shape[0], 1, X_train_fold.shape[1]))  # Reshape for LSTM/GRU
-                X_val_fold = X_val_fold.reshape((X_val_fold.shape[0], 1, X_val_fold.shape[1]))  # Reshape for LSTM/GRU
-                
-                model = Sequential()
-                model.add(LSTM(50, activation='relu', return_sequences=True, input_shape=(1, X_train_fold.shape[2])))
-                
-                model.add(Dropout(0.2))
-                model.add(Dense(1, activation='sigmoid'))
-                model.compile(optimizer=Adam(), loss='binary_crossentropy', metrics=['accuracy'])
-                
-                model.fit(X_train_fold, y_train_fold, epochs=5, batch_size=32, verbose=0)
-                
-                lstm_y_pred = (model.predict(X_val_fold) > 0.5).astype(float)
-                model_scores.append(accuracy_score(y_val_fold, lstm_y_pred))
-
-        if verbose:
-            print("=================== Cross-Validation ===================")
-            print(f"Accuracy fold {i} {model_type}: {np.mean(model_scores):.4f}\n")
-        
-        cross_val_accs.append(np.mean(model_scores))
-        
-        # Train on full dataset
-        if model_type == "logreg":
-            logreg_model = LogisticRegression(penalty='l1', solver='liblinear')
-            logreg_model.fit(X_train, y_train_driver_fold)
-            model_test_pred = logreg_model.predict(X_test)
-            
-            test_score = accuracy_score(y_test_driver_fold, model_test_pred)
-            test_f1 = f1_score(y_test_driver_fold, model_test_pred)
-        
-        elif model_type == "lstm":
-            X_train = X_train.reshape((X_train.shape[0], 1, X_train.shape[1]))  # Reshape for LSTM/GRU
-            X_test = X_test.reshape((X_test.shape[0], 1, X_test.shape[1]))  # Reshape for LSTM/GRU
-            
-            model = Sequential()
-            model.add(LSTM(50, activation='relu', return_sequences=True, input_shape=(1, X_train.shape[2])))
-                
-            model.add(Dropout(0.2))
-            model.add(Dense(1, activation='sigmoid'))
-            model.compile(optimizer=Adam(), loss='binary_crossentropy', metrics=['accuracy'])
-            
-            model.fit(X_train, y_train_driver_fold, epochs=5, batch_size=32, verbose=0)
-            lstm_y_pred = (model.predict(X_test) > 0.5).astype(float)
-            
-            test_score = accuracy_score(y_test_driver_fold, lstm_y_pred)
-            test_f1 = f1_score(y_test_driver_fold, lstm_y_pred)
-
-        if verbose:
-            print("================ Test Evaluation =================")
-            print(f"Accuracy final on test set {model_type}: {test_score:.4f}")
-            print(f"F1 score on test set {model_type}: {test_f1:.4f}")
-            print(classification_report(y_test_driver_fold, lstm_y_pred if model_type != "logreg" else model_test_pred, target_names=["no-maneuver", "maneuver"]))
-            print(confusion_matrix(y_test_driver_fold, lstm_y_pred if model_type != "logreg" else model_test_pred))
-        
-        test_accs.append(test_score)
-        test_f1_scores.append(test_f1)
-
-    return cross_val_accs, test_accs, test_f1_scores
-
-
-
 def create_lstm_model(input_shape, lstm_units_1=50, lstm_units_2=50, dropout_rate=0.2):
     model = Sequential()
 
@@ -236,9 +132,8 @@ def create_lstm_model(input_shape, lstm_units_1=50, lstm_units_2=50, dropout_rat
     model.add(Input(shape=input_shape))
 
     # Add LSTM layers with tanh activation
-    model.add(LSTM(lstm_units_1, activation='relu', return_sequences=True))  # First LSTM layer
-    model.add(LSTM(lstm_units_2, activation='relu', return_sequences=False))  # Second LSTM layer
-
+    model.add(LSTM(lstm_units_1, activation='relu', return_sequences=True))  
+    model.add(LSTM(lstm_units_2, activation='relu', return_sequences=False)) 
     # Add Dropout layer for regularization
     model.add(Dropout(dropout_rate))
 
@@ -292,9 +187,8 @@ def evaluate_drivers(drivers, maneuver_id, maneuver_names, dfs, window_size, win
                 model_scores.append(accuracy_score(y_val_fold, logreg_y_pred))
             
             elif model_type == "lstm":
-                # LSTM/GRU model
-                X_train_fold = X_train_fold.reshape((X_train_fold.shape[0], 1, X_train_fold.shape[1]))  # Reshape for LSTM/GRU
-                X_val_fold = X_val_fold.reshape((X_val_fold.shape[0], 1, X_val_fold.shape[1]))  # Reshape for LSTM/GRU
+                X_train_fold = X_train_fold.reshape((X_train_fold.shape[0], 1, X_train_fold.shape[1]))  
+                X_val_fold = X_val_fold.reshape((X_val_fold.shape[0], 1, X_val_fold.shape[1])) 
                 
                 model = create_lstm_model((1, X_train_fold.shape[2]))
                 model.fit(X_train_fold, y_train_fold, epochs=10, batch_size=32, verbose=0)
@@ -318,8 +212,8 @@ def evaluate_drivers(drivers, maneuver_id, maneuver_names, dfs, window_size, win
             test_f1 = f1_score(y_test_driver_fold, model_test_pred)
         
         elif model_type == "lstm":
-            X_train = X_train.reshape((X_train.shape[0], 1, X_train.shape[1]))  # Reshape for LSTM/GRU
-            X_test = X_test.reshape((X_test.shape[0], 1, X_test.shape[1]))  # Reshape for LSTM/GRU
+            X_train = X_train.reshape((X_train.shape[0], 1, X_train.shape[1]))  
+            X_test = X_test.reshape((X_test.shape[0], 1, X_test.shape[1]))  
             
             model = create_lstm_model((1, X_train_fold.shape[2]))
             model.fit(X_train, y_train_driver_fold, epochs=10, batch_size=32, verbose=0)
