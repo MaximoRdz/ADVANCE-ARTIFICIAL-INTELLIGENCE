@@ -63,7 +63,6 @@ def get_loaders(
         print("INFO: parsing driving dataset")
         print(f"INFO: drivers found {drivers}")
         print(f"INFO: maneuvers found {maneuver_names}")
-        print("INFO:")
         print(f"INFO: summary:")
         print(f"INFO: using maneuver {maneuver_names[maneuver_ind]} data")
         print(f"INFO: using driver {drivers[test_driver_ind]} for test split")
@@ -73,11 +72,10 @@ def get_loaders(
     X_train_list, X_test_list = [], []
     y_train_list, y_test_list = [], []
 
-    # Iterar sobre todos los conductores para una misma maniobra
     for i, driver in enumerate(drivers):
         df = copy.deepcopy(dfs[driver][maneuver_names[maneuver_ind]])
 
-        # Crear nuevas características con ventana deslizante
+        # Create new features using sliding windows
         df['speed_mean'] = df['speed'].rolling(window=window_size, min_periods=1, step=window_step).mean()
         df['speed_std'] = df['speed'].rolling(window=window_size, min_periods=1, step=window_step).std()
         df['RPM_mean'] = df['RPM'].rolling(window=window_size, min_periods=1, step=window_step).mean()
@@ -87,13 +85,13 @@ def get_loaders(
         df['gas_mean'] = df['Gas pedal'].rolling(window=window_size, min_periods=1, step=window_step).mean()
         df['gas_std'] = df['Gas pedal'].rolling(window=window_size, min_periods=1, step=window_step).std()
 
-        # Definir el target: si ocurre una maniobra en el próximo instante (t+1)
+        # Define the target: if a maneuver occurs in the next instant (t+1)
         df["target"] = df["Maneuver marker flag"].shift(-1)
 
-        # Eliminar filas con valores NaN creados por shift y rolling
+        # Drop rows with NaN values
         df = df.dropna()
 
-        # Seleccionar variables relevantes
+        # Separate features and target
         X_driver = df.drop(columns=["Maneuver marker flag", "target"])
         y_driver = df["target"]
 
