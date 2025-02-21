@@ -16,6 +16,6 @@ pip install -r requirements.txt
 
 
 ### Content
-1.  preprocessing.ipynb: notebook with the preprocessing of the original data.
-2.  experimentation.ipynb: notebook with the experimentation and comparison of the models.
-3.  maneuvers.ipynb: notebook with the results and analysis of each maneuver with the best model.
+1.  [preprocessing.ipynb](https://github.com/MaximoRdz/ADVANCE-ARTIFICIAL-INTELLIGENCE/blob/main/p1/preprocessing.ipynb): notebook with the preprocessing of the original data.
+2.  [experimentation.ipynb](https://github.com/MaximoRdz/ADVANCE-ARTIFICIAL-INTELLIGENCE/blob/main/p1/experimentation.ipynb): notebook with the experimentation and comparison of the models.
+3.  [maneuvers.ipynb](https://github.com/MaximoRdz/ADVANCE-ARTIFICIAL-INTELLIGENCE/blob/main/p1/maneuvers.ipynb): notebook with the results and analysis of each maneuver with the best model.
