@@ -14,8 +14,26 @@ pip install -r requirements.txt
 - Move DriverX folders to data folder
 - **Error**: Typo in filename `Driver5/STISIMData_3step-Turning` should be `Driver5/STISIMData_3step-Turnings`
 
-
 ### Content
 1.  [preprocessing.ipynb](https://github.com/MaximoRdz/ADVANCE-ARTIFICIAL-INTELLIGENCE/blob/main/p1/preprocessing.ipynb): notebook with the preprocessing of the original data.
 2.  [experimentation.ipynb](https://github.com/MaximoRdz/ADVANCE-ARTIFICIAL-INTELLIGENCE/blob/main/p1/experimentation.ipynb): notebook with the experimentation and comparison of the models.
 3.  [maneuvers.ipynb](https://github.com/MaximoRdz/ADVANCE-ARTIFICIAL-INTELLIGENCE/blob/main/p1/maneuvers.ipynb): notebook with the results and analysis of each maneuver with the best model.
+
+
+## Task 2. Tissue Classification and Tumor Detection in Medical Images
+
+### Sources
+- [Dataset](https://zenodo.org/records/1214456)
+- [Paper](https://www.nature.com/articles/s41591-019-0462-y)
+
+### Replication
+
+#### 1. Install dependencies (Python 3.10)
+```
+pip install -r requirements.txt
+```
+
+#### 2. Create data folder
+
+
+### Content
