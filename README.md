@@ -34,6 +34,11 @@ pip install -r requirements.txt
 ```
 
 #### 2. Create data folder
+- Create a folder named 'data'.
+- Move train zip (NCT-CRC-HE-100K.zip) and test zip (CRC-VAL-HE-7K.zip) to data folder.
+- Create a folder named 'models' where the trained models will be saved.
 
 
 ### Content
+1.  [tissues.ipynb](https://github.com/MaximoRdz/ADVANCE-ARTIFICIAL-INTELLIGENCE/blob/main/p2/tissues.ipynb): notebook with a multilabel (9) classifier which classifies the tissue type of the images.
+2.  [tumors.ipynb](https://github.com/MaximoRdz/ADVANCE-ARTIFICIAL-INTELLIGENCE/blob/main/p2/tumors.ipynb): notebook with a binary (healthy, tumor) classifier which detects the presence of tumors in the tissue images.
